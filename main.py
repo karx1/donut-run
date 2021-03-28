@@ -40,17 +40,20 @@ class Game(arcade.Window):
         self.player_list = None
         self.player_sprite = None
 
+        self.bullet_list = None
+
         self.up_pressed = False
         self.down_pressed = False
         self.left_pressed = False
         self.right_pressed = False
 
-        arcade.set_background_color(arcade.color.AERO_BLUE)
+        arcade.set_background_color(arcade.color.DARK_BROWN)
 
     def on_draw(self):
         arcade.start_render()
 
         self.player_list.draw()
+        self.bullet_list.draw()
 
     def on_update(self, delta_time: float):
         self.player_sprite.change_x = 0
@@ -66,12 +69,14 @@ class Game(arcade.Window):
             self.player_sprite.change_x = MOVEMENT_SPEED
 
         self.player_list.update()
+        self.bullet_list.update()
 
         return super().on_update(delta_time)
 
     def setup(self):
 
         self.player_list = arcade.SpriteList()
+        self.bullet_list = arcade.SpriteList()
 
         self.player_sprite = Player("assets/player.png", SPRITE_SCALING * 2)
         self.player_sprite.center_x = 50
@@ -132,6 +137,24 @@ class Game(arcade.Window):
         angle = math.atan2(y_diff, x_diff)
 
         self.player_sprite.angle = math.degrees(angle)
+
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        bullet = arcade.Sprite("assets/bullet.png", 0.08)
+
+        bullet.center_x = self.player_sprite.center_x
+        bullet.center_y = self.player_sprite.center_y
+
+        x_diff = x - self.player_sprite.center_x
+        y_diff = y - self.player_sprite.center_y
+        angle = math.atan2(y_diff, x_diff)
+
+        bullet.angle = math.degrees(angle)
+        self.player_sprite.angle = math.degrees(angle)
+
+        bullet.change_x = math.cos(angle) * MOVEMENT_SPEED
+        bullet.change_y = math.sin(angle) * MOVEMENT_SPEED
+
+        self.bullet_list.append(bullet)
 
 
 def main():
