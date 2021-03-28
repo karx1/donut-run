@@ -49,6 +49,8 @@ class Game(arcade.Window):
         self.left_pressed = False
         self.right_pressed = False
 
+        self.physics_engine = None
+
         arcade.set_background_color(arcade.color.DARK_BROWN)
 
     def on_draw(self):
@@ -71,9 +73,27 @@ class Game(arcade.Window):
         elif self.right_pressed and not self.left_pressed:
             self.player_sprite.change_x = MOVEMENT_SPEED
 
-        self.player_list.update()
+        # self.player_list.update()
+
+        for bullet in self.bullet_list:
+            wall_hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
+
+            if len(wall_hit_list) > 0:
+                bullet.remove_from_sprite_lists()
+
+            # If bullet flies offscreen, remove it
+            if (
+                bullet.bottom > SCREEN_WIDTH
+                or bullet.top < 0
+                or bullet.right < 0
+                or bullet.left > SCREEN_WIDTH
+            ):
+                bullet.remove_from_sprite_lists()
+
         self.bullet_list.update()
-        self.wall_list.update()
+        # self.wall_list.update()
+
+        self.physics_engine.update()
 
         return super().on_update(delta_time)
 
@@ -99,8 +119,9 @@ class Game(arcade.Window):
                 wall.center_x = random.randrange(SCREEN_WIDTH)
                 wall.center_y = random.randrange(SCREEN_HEIGHT)
 
-
-                wall_hit_list = arcade.check_for_collision_with_list(wall, self.wall_list)
+                wall_hit_list = arcade.check_for_collision_with_list(
+                    wall, self.wall_list
+                )
 
                 if len(wall_hit_list) == 0:
                     wall_placed = True
@@ -108,6 +129,9 @@ class Game(arcade.Window):
             # Add the coin to the lists
             self.wall_list.append(wall)
 
+        self.physics_engine = arcade.PhysicsEngineSimple(
+            self.player_sprite, self.wall_list
+        )
 
     def on_key_press(self, key, modifiers):
         # If the player presses a key, update the speed
