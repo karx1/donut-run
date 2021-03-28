@@ -1,5 +1,6 @@
-import math
 import arcade
+import math
+import random
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -41,6 +42,7 @@ class Game(arcade.Window):
         self.player_sprite = None
 
         self.bullet_list = None
+        self.wall_list = None
 
         self.up_pressed = False
         self.down_pressed = False
@@ -54,6 +56,7 @@ class Game(arcade.Window):
 
         self.player_list.draw()
         self.bullet_list.draw()
+        self.wall_list.draw()
 
     def on_update(self, delta_time: float):
         self.player_sprite.change_x = 0
@@ -70,6 +73,7 @@ class Game(arcade.Window):
 
         self.player_list.update()
         self.bullet_list.update()
+        self.wall_list.update()
 
         return super().on_update(delta_time)
 
@@ -77,11 +81,33 @@ class Game(arcade.Window):
 
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
+        self.wall_list = arcade.SpriteList()
 
         self.player_sprite = Player("assets/player.png", SPRITE_SCALING * 2)
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 50
         self.player_list.append(self.player_sprite)
+
+        for _ in range(25):
+            wall = arcade.Sprite("assets/wall.png", 1)
+
+            wall_placed = False
+
+            # Keep trying until success
+            while not wall_placed:
+                # Position the coin
+                wall.center_x = random.randrange(SCREEN_WIDTH)
+                wall.center_y = random.randrange(SCREEN_HEIGHT)
+
+
+                wall_hit_list = arcade.check_for_collision_with_list(wall, self.wall_list)
+
+                if len(wall_hit_list) == 0:
+                    wall_placed = True
+
+            # Add the coin to the lists
+            self.wall_list.append(wall)
+
 
     def on_key_press(self, key, modifiers):
         # If the player presses a key, update the speed
@@ -121,11 +147,11 @@ class Game(arcade.Window):
             self.up_pressed = False
         elif key == arcade.key.S:
             self.down_pressed = False
-        elif key == arcade.key.A :
+        elif key == arcade.key.A:
             self.left_pressed = False
         elif key == arcade.key.D:
             self.right_pressed = False
-    
+
     def on_mouse_motion(self, x, y, dx, dy):
         """ Handle Mouse Motion """
 
