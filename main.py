@@ -1,3 +1,4 @@
+import math
 import arcade
 
 SCREEN_WIDTH = 800
@@ -119,6 +120,18 @@ class Game(arcade.Window):
             self.left_pressed = False
         elif key == arcade.key.D:
             self.right_pressed = False
+    
+    def on_mouse_motion(self, x, y, dx, dy):
+        """ Handle Mouse Motion """
+
+        start_x = self.player_sprite.center_x
+        start_y = self.player_sprite.center_y
+
+        x_diff = x - start_x
+        y_diff = y - start_y
+        angle = math.atan2(y_diff, x_diff)
+
+        self.player_sprite.angle = math.degrees(angle)
 
 
 def main():
