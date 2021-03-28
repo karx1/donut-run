@@ -43,6 +43,7 @@ class Game(arcade.Window):
 
         self.bullet_list = None
         self.wall_list = None
+        self.enemy_list = None
 
         self.up_pressed = False
         self.down_pressed = False
@@ -59,6 +60,20 @@ class Game(arcade.Window):
         self.player_list.draw()
         self.bullet_list.draw()
         self.wall_list.draw()
+        self.enemy_list.draw()
+
+        for enemy in self.enemy_list:
+            if arcade.has_line_of_sight(
+                self.player_sprite.position, enemy.position, self.wall_list
+            ):
+                arcade.draw_line(
+                    self.player_sprite.center_x,
+                    self.player_sprite.center_y,
+                    enemy.center_x,
+                    enemy.center_y,
+                    arcade.color.RED,
+                    2,
+                )
 
     def on_update(self, delta_time: float):
         self.player_sprite.change_x = 0
@@ -92,6 +107,7 @@ class Game(arcade.Window):
 
         self.bullet_list.update()
         # self.wall_list.update()
+        self.enemy_list.update()
 
         self.physics_engine.update()
 
@@ -102,6 +118,7 @@ class Game(arcade.Window):
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
+        self.enemy_list = arcade.SpriteList()
 
         self.player_sprite = Player("assets/player.png", SPRITE_SCALING * 2)
         self.player_sprite.center_x = 50
@@ -109,25 +126,46 @@ class Game(arcade.Window):
         self.player_list.append(self.player_sprite)
 
         for _ in range(25):
-            wall = arcade.Sprite("assets/wall.png", 1)
+            enemy = arcade.Sprite("assets/wall.png", 1)
 
-            wall_placed = False
+            enemy_placed = False
 
             # Keep trying until success
-            while not wall_placed:
+            while not enemy_placed:
                 # Position the coin
-                wall.center_x = random.randrange(SCREEN_WIDTH)
-                wall.center_y = random.randrange(SCREEN_HEIGHT)
+                enemy.center_x = random.randrange(SCREEN_WIDTH)
+                enemy.center_y = random.randrange(SCREEN_HEIGHT)
 
-                wall_hit_list = arcade.check_for_collision_with_list(
-                    wall, self.wall_list
+                enemy_hit_list = arcade.check_for_collision_with_list(
+                    enemy, self.wall_list
                 )
 
-                if len(wall_hit_list) == 0:
-                    wall_placed = True
+                if len(enemy_hit_list) == 0:
+                    enemy_placed = True
 
             # Add the coin to the lists
-            self.wall_list.append(wall)
+            self.wall_list.append(enemy)
+
+        for _ in range(25):
+            enemy = arcade.Sprite("assets/enemy.png", 1)
+
+            enemy_placed = False
+
+            # Keep trying until success
+            while not enemy_placed:
+                # Position the coin
+                enemy.center_x = random.randrange(SCREEN_WIDTH)
+                enemy.center_y = random.randrange(SCREEN_HEIGHT)
+
+                enemy_hit_list = arcade.check_for_collision_with_list(
+                    enemy, self.enemy_list
+                )
+
+                if len(enemy_hit_list) == 0:
+                    enemy_placed = True
+
+            # Add the coin to the lists
+            self.enemy_list.append(enemy)
 
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, self.wall_list
