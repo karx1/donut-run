@@ -14,6 +14,10 @@ MOVEMENT_SPEED = 5
 
 class Player(arcade.Sprite):
     """ Player Class """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.last_mouse_x, self.last_mouse_y = None, None
 
     def update(self):
         """ Move the player """
@@ -89,6 +93,16 @@ class Game(arcade.Window):
             self.player_sprite.change_x = MOVEMENT_SPEED
 
         # self.player_list.update()
+
+        if self.player_sprite.last_mouse_x and self.player_sprite.last_mouse_y:
+            start_x = self.player_sprite.center_x
+            start_y = self.player_sprite.center_y
+
+            x_diff = self.player_sprite.last_mouse_x - start_x
+            y_diff = self.player_sprite.last_mouse_y - start_y
+            angle = math.atan2(y_diff, x_diff)
+
+            self.player_sprite.angle = math.degrees(angle)
 
         for bullet in self.bullet_list:
             wall_hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
@@ -225,6 +239,8 @@ class Game(arcade.Window):
         angle = math.atan2(y_diff, x_diff)
 
         self.player_sprite.angle = math.degrees(angle)
+        self.player_sprite.last_mouse_x = x
+        self.player_sprite.last_mouse_y = y
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         bullet = arcade.Sprite("assets/bullet.png", 0.08)
@@ -238,6 +254,8 @@ class Game(arcade.Window):
 
         bullet.angle = math.degrees(angle)
         self.player_sprite.angle = math.degrees(angle)
+        self.player_sprite.last_mouse_x = x
+        self.player_sprite.last_mouse_y = y
 
         bullet.change_x = math.cos(angle) * MOVEMENT_SPEED
         bullet.change_y = math.sin(angle) * MOVEMENT_SPEED
