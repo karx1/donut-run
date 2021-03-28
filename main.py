@@ -14,6 +14,7 @@ MOVEMENT_SPEED = 5
 
 class Player(arcade.Sprite):
     """ Player Class """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -36,6 +37,29 @@ class Player(arcade.Sprite):
             self.bottom = 0
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1
+
+
+class Enemy(arcade.Sprite):
+    def follow_sprite(self, sprite):
+        if random.randrange(100) == 0:
+            start_x = self.center_x
+            start_y = self.center_y
+
+            # Get the destination location for the enemy
+            dest_x = sprite.center_x
+            dest_y = sprite.center_y
+
+            # Do math to calculate how to get the bullet to the destination.
+            # Calculation the angle in radians between the start points
+            # and end points. This is the angle the bullet will travel.
+            x_diff = dest_x - start_x
+            y_diff = dest_y - start_y
+            angle = math.atan2(y_diff, x_diff)
+
+            # Taking into account the angle, calculate our change_x
+            # and change_y. Velocity is how fast the enemy travels.
+            self.change_x = math.cos(angle) * 2
+            self.change_y = math.sin(angle) * 2
 
 
 class Game(arcade.Window):
@@ -65,19 +89,6 @@ class Game(arcade.Window):
         self.bullet_list.draw()
         self.wall_list.draw()
         self.enemy_list.draw()
-
-        for enemy in self.enemy_list:
-            if arcade.has_line_of_sight(
-                self.player_sprite.position, enemy.position, self.wall_list
-            ):
-                arcade.draw_line(
-                    self.player_sprite.center_x,
-                    self.player_sprite.center_y,
-                    enemy.center_x,
-                    enemy.center_y,
-                    arcade.color.RED,
-                    2,
-                )
 
     def on_update(self, delta_time: float):
         self.player_sprite.change_x = 0
@@ -121,6 +132,14 @@ class Game(arcade.Window):
 
         self.bullet_list.update()
         # self.wall_list.update()
+        for enemy in self.enemy_list:
+            if not arcade.has_line_of_sight(
+                self.player_sprite.position, enemy.position, self.wall_list
+            ):
+                enemy.follow_sprite(self.player_sprite)
+            else:
+                enemy.stop()
+
         self.enemy_list.update()
 
         self.physics_engine.update()
@@ -140,28 +159,28 @@ class Game(arcade.Window):
         self.player_list.append(self.player_sprite)
 
         for _ in range(25):
-            enemy = arcade.Sprite("assets/wall.png", 1)
+            wall = arcade.Sprite("assets/wall.png", 1)
 
-            enemy_placed = False
+            wall_placed = False
 
             # Keep trying until success
-            while not enemy_placed:
+            while not wall_placed:
                 # Position the coin
-                enemy.center_x = random.randrange(SCREEN_WIDTH)
-                enemy.center_y = random.randrange(SCREEN_HEIGHT)
+                wall.center_x = random.randrange(SCREEN_WIDTH)
+                wall.center_y = random.randrange(SCREEN_HEIGHT)
 
-                enemy_hit_list = arcade.check_for_collision_with_list(
-                    enemy, self.wall_list
+                wall_hit_list = arcade.check_for_collision_with_list(
+                    wall, self.wall_list
                 )
 
-                if len(enemy_hit_list) == 0:
-                    enemy_placed = True
+                if len(wall_hit_list) == 0:
+                    wall_placed = True
 
             # Add the coin to the lists
-            self.wall_list.append(enemy)
+            self.wall_list.append(wall)
 
         for _ in range(25):
-            enemy = arcade.Sprite("assets/enemy.png", 1)
+            enemy = Enemy("assets/enemy.png", 1)
 
             enemy_placed = False
 
