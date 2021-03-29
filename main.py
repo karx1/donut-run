@@ -123,17 +123,17 @@ class Game(arcade.Window):
 
         for bullet in self.bullet_list:
             wall_hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
-            enemy_hit_list = arcade.check_for_collision_with_list(bullet, self.enemy_list)
+            enemy_hit_list = arcade.check_for_collision_with_list(
+                bullet, self.enemy_list
+            )
 
             if len(wall_hit_list) > 0:
                 bullet.remove_from_sprite_lists()
-            
+
             if len(enemy_hit_list) > 0:
                 bullet.remove_from_sprite_lists()
                 for enemy in enemy_hit_list:
                     enemy.remove_from_sprite_lists()
-            
-
 
             # If bullet flies offscreen, remove it
             if (
@@ -153,13 +153,25 @@ class Game(arcade.Window):
                 enemy.follow_sprite(self.player_sprite)
             else:
                 enemy.stop()
-            
+
                 x_diff = self.player_sprite.center_x - enemy.center_x
                 y_diff = self.player_sprite.center_y - enemy.center_y
 
                 angle = math.atan2(y_diff, x_diff)
 
                 enemy.angle = math.degrees(angle)
+
+                odds = 200
+                adj_odds = int(odds * (1 / 60) / delta_time)
+                if random.randrange(adj_odds) == 0:
+                    bullet = arcade.Sprite("assets/bullet.png", 0.08)
+                    bullet.center_x = enemy.center_x
+                    bullet.top = enemy.bottom
+                    bullet.angle = math.degrees(angle)
+
+                    bullet.change_x = math.cos(angle) * MOVEMENT_SPEED
+                    bullet.change_y = math.sin(angle) * MOVEMENT_SPEED
+                    self.bullet_list.append(bullet)
 
         self.enemy_list.update()
 
@@ -218,7 +230,7 @@ class Game(arcade.Window):
 
                 if len(enemy_hit_list) == 0:
                     enemy_placed = True
-            
+
             engine = arcade.PhysicsEngineSimple(enemy, self.wall_list)
             self.enemy_engines.append(engine)
 
