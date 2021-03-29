@@ -72,6 +72,8 @@ class Game(arcade.Window):
         self.player_sprite = None
 
         self.bullet_list = None
+        self.enemy_bullet_list = None
+
         self.wall_list = None
         self.enemy_list = None
 
@@ -92,6 +94,7 @@ class Game(arcade.Window):
         self.bullet_list.draw()
         self.wall_list.draw()
         self.enemy_list.draw()
+        self.enemy_bullet_list.draw()
 
     def on_update(self, delta_time: float):
         for engine in self.enemy_engines:
@@ -166,16 +169,18 @@ class Game(arcade.Window):
                 if random.randrange(adj_odds) == 0:
                     bullet = arcade.Sprite("assets/bullet.png", 0.08)
                     bullet.center_x = enemy.center_x
-                    bullet.top = enemy.bottom
+                    bullet.center_y = enemy.center_y
                     bullet.angle = math.degrees(angle)
 
                     bullet.change_x = math.cos(angle) * MOVEMENT_SPEED
                     bullet.change_y = math.sin(angle) * MOVEMENT_SPEED
-                    self.bullet_list.append(bullet)
+                    self.enemy_bullet_list.append(bullet)
 
         self.enemy_list.update()
 
         self.physics_engine.update()
+
+        self.enemy_bullet_list.update()
 
         return super().on_update(delta_time)
 
@@ -183,6 +188,7 @@ class Game(arcade.Window):
 
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
+        self.enemy_bullet_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
 
