@@ -1,15 +1,8 @@
 import arcade
 import math
 import random
-
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Starting Template"
-
-
-SPRITE_SCALING = 0.5
-
-MOVEMENT_SPEED = 5
+from views import GameOverView
+from globals import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, SPRITE_SCALING, MOVEMENT_SPEED
 
 
 class Player(arcade.Sprite):
@@ -64,9 +57,9 @@ class Enemy(arcade.Sprite):
             self.change_y = math.sin(angle) * 2
 
 
-class Game(arcade.Window):
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+class Game(arcade.View):
+    def __init__(self):
+        super().__init__()
 
         self.player_list = None
         self.player_sprite = None
@@ -153,6 +146,8 @@ class Game(arcade.Window):
 
             if player_hit:
                 self.player_sprite.remove_from_sprite_lists()
+                view = GameOverView(self.window, Game)
+                self.window.show_view(view)
 
             if len(wall_hit_list) > 0:
                 bullet.remove_from_sprite_lists()
@@ -345,8 +340,10 @@ class Game(arcade.Window):
 
 def main():
     """ Main method """
-    game = Game(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    game_view = Game()
+    game_view.setup()
+    window.show_view(game_view)
     arcade.run()
 
 
