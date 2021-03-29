@@ -147,6 +147,24 @@ class Game(arcade.Window):
             ):
                 bullet.remove_from_sprite_lists()
 
+        for bullet in self.enemy_bullet_list:
+            wall_hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
+            player_hit = arcade.check_for_collision(bullet, self.player_sprite)
+
+            if player_hit:
+                self.player_sprite.remove_from_sprite_lists()
+
+            if len(wall_hit_list) > 0:
+                bullet.remove_from_sprite_lists()
+
+            if (
+                bullet.bottom > SCREEN_WIDTH
+                or bullet.top < 0
+                or bullet.right < 0
+                or bullet.left > SCREEN_WIDTH
+            ):
+                bullet.remove_from_sprite_lists()
+
         self.bullet_list.update()
         # self.wall_list.update()
         for enemy in self.enemy_list:
