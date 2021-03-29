@@ -18,5 +18,5 @@ class GameOverView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         game_view = self.game()
-        game_view.setup()
+        game_view.setup(0, 0)
         self.window.show_view(game_view)

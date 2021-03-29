@@ -2,7 +2,13 @@ import arcade
 import math
 import random
 from views import GameOverView
-from globals import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, SPRITE_SCALING, MOVEMENT_SPEED
+from globals import (
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    SCREEN_TITLE,
+    SPRITE_SCALING,
+    MOVEMENT_SPEED,
+)
 
 
 class Player(arcade.Sprite):
@@ -77,6 +83,9 @@ class Game(arcade.View):
 
         self.physics_engine = None
         self.enemy_engines = None
+
+        self.level = 0
+        self.score = 0
 
         arcade.set_background_color(arcade.color.DARK_BROWN)
 
@@ -195,9 +204,16 @@ class Game(arcade.View):
 
         self.enemy_bullet_list.update()
 
+        if len(self.enemy_list) == 0:
+            self.level += 1
+            self.setup(self.level, self.score)
+
         return super().on_update(delta_time)
 
-    def setup(self):
+    def setup(self, level, score):
+
+        self.level = level
+        self.score = score
 
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
@@ -232,7 +248,7 @@ class Game(arcade.View):
             self.wall_list.append(wall)
 
         self.enemy_engines = []
-        for _ in range(25):
+        for _ in range(self.level + 1):
             enemy = Enemy("assets/enemy.png", 1)
 
             enemy_placed = False
@@ -342,7 +358,7 @@ def main():
     """ Main method """
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     game_view = Game()
-    game_view.setup()
+    game_view.setup(0, 0)
     window.show_view(game_view)
     arcade.run()
 
