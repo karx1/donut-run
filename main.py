@@ -1,7 +1,7 @@
 import arcade
 import math
 import random
-from views import GameOverView
+from views import GameOverView, OpeningView
 from globals import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
@@ -357,9 +357,8 @@ class Game(arcade.View):
 def main():
     """ Main method """
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game_view = Game()
-    game_view.setup(0, 0)
-    window.show_view(game_view)
+    view = OpeningView(window, Game)
+    window.show_view(view)
     arcade.run()
 
 
