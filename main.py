@@ -56,6 +56,8 @@ class Enemy(arcade.Sprite):
             y_diff = dest_y - start_y
             angle = math.atan2(y_diff, x_diff)
 
+            self.angle = math.degrees(angle)
+
             # Taking into account the angle, calculate our change_x
             # and change_y. Velocity is how fast the enemy travels.
             self.change_x = math.cos(angle) * 2
@@ -117,9 +119,17 @@ class Game(arcade.Window):
 
         for bullet in self.bullet_list:
             wall_hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
+            enemy_hit_list = arcade.check_for_collision_with_list(bullet, self.enemy_list)
 
             if len(wall_hit_list) > 0:
                 bullet.remove_from_sprite_lists()
+            
+            if len(enemy_hit_list) > 0:
+                bullet.remove_from_sprite_lists()
+                for enemy in enemy_hit_list:
+                    enemy.remove_from_sprite_lists()
+            
+
 
             # If bullet flies offscreen, remove it
             if (
