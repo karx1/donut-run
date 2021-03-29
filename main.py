@@ -81,6 +81,7 @@ class Game(arcade.Window):
         self.right_pressed = False
 
         self.physics_engine = None
+        self.enemy_engines = None
 
         arcade.set_background_color(arcade.color.DARK_BROWN)
 
@@ -93,6 +94,9 @@ class Game(arcade.Window):
         self.enemy_list.draw()
 
     def on_update(self, delta_time: float):
+        for engine in self.enemy_engines:
+            engine.update()
+
         self.player_sprite.change_x = 0
         self.player_sprite.change_y = 0
 
@@ -149,6 +153,13 @@ class Game(arcade.Window):
                 enemy.follow_sprite(self.player_sprite)
             else:
                 enemy.stop()
+            
+                x_diff = self.player_sprite.center_x - enemy.center_x
+                y_diff = self.player_sprite.center_y - enemy.center_y
+
+                angle = math.atan2(y_diff, x_diff)
+
+                enemy.angle = math.degrees(angle)
 
         self.enemy_list.update()
 
@@ -189,6 +200,7 @@ class Game(arcade.Window):
             # Add the coin to the lists
             self.wall_list.append(wall)
 
+        self.enemy_engines = []
         for _ in range(25):
             enemy = Enemy("assets/enemy.png", 1)
 
@@ -206,6 +218,9 @@ class Game(arcade.Window):
 
                 if len(enemy_hit_list) == 0:
                     enemy_placed = True
+            
+            engine = arcade.PhysicsEngineSimple(enemy, self.wall_list)
+            self.enemy_engines.append(engine)
 
             # Add the coin to the lists
             self.enemy_list.append(enemy)
