@@ -70,3 +70,8 @@ class OpeningView(arcade.View):
             font_size=15,
             anchor_x="center",
         )
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        game_view = self.game()
+        game_view.setup(0, 0)
+        self.window.show_view(game_view)
