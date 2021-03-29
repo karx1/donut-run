@@ -1,5 +1,6 @@
 import arcade
 from globals import SCREEN_WIDTH, SCREEN_HEIGHT
+from text import draw_text
 
 
 class GameOverView(arcade.View):
@@ -12,7 +13,7 @@ class GameOverView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text(
+        draw_text(
             "GAME OVER",
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT / 2,
@@ -20,7 +21,7 @@ class GameOverView(arcade.View):
             font_size=50,
             anchor_x="center",
         )
-        arcade.draw_text(
+        draw_text(
             "Click to restart",
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT / 2 - 75,
@@ -45,7 +46,7 @@ class OpeningView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text(
+        draw_text(
             "Donut Run",
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT / 2,
@@ -53,7 +54,7 @@ class OpeningView(arcade.View):
             font_size=50,
             anchor_x="center",
         )
-        arcade.draw_text(
+        draw_text(
             "Click to start",
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT / 2 - 75,
@@ -61,11 +62,11 @@ class OpeningView(arcade.View):
             font_size=20,
             anchor_x="center",
         )
-        arcade.draw_text(
-            f"Use WASD/Arrow Keys to move, and use your mouse to aim!",
+        draw_text(
+            "Use WASD/Arrow Keys to move, and use your mouse to aim!",
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT / 2 - 100,
-            arcade.color.WHITE,
+            arcade.color.GRAY,
             font_size=15,
             anchor_x="center",
         )
