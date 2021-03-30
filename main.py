@@ -9,6 +9,7 @@ from globals import (
     SPRITE_SCALING,
     MOVEMENT_SPEED,
 )
+from text import draw_text
 
 
 class Player(arcade.Sprite):
@@ -99,6 +100,10 @@ class Game(arcade.View):
         self.donut_list.draw()
         self.enemy_list.draw()
         self.enemy_bullet_list.draw()
+
+        # Draw score and level text
+        draw_text(f"Wave: {self.level}", 10, 40, arcade.color.WHITE, 14)
+        draw_text(f"Score: {self.score}", 10, 20, arcade.color.WHITE, 14)
 
     def on_update(self, delta_time: float):
         for engine in self.enemy_engines:
