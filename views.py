@@ -1,6 +1,7 @@
 import arcade
 from globals import SCREEN_WIDTH, SCREEN_HEIGHT
 from text import draw_text
+import random
 
 
 class GameOverView(arcade.View):
@@ -46,9 +47,18 @@ class GameOverView(arcade.View):
         self.window.show_view(game_view)
 
 
+def get_tip():
+    # Get a random tip to show on the start screen
+    tips = [
+        "Try to get the donuts before killing all the enemies!",
+        "Donuts taste bad with bullets in them!"
+    ]
+    return random.choice(tips)
+
 class OpeningView(arcade.View):
     def __init__(self, window: arcade.Window, game: arcade.View):
         self.game = game
+        self.tip = get_tip()
 
         super().__init__(window=window)
 
@@ -76,6 +86,14 @@ class OpeningView(arcade.View):
             "Use WASD/Arrow Keys to move, and use your mouse to aim!",
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT / 2 - 100,
+            arcade.color.GRAY,
+            font_size=15,
+            anchor_x="center",
+        )
+        draw_text(
+            f"TIP: {self.tip}",
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 2 - 125,
             arcade.color.GRAY,
             font_size=15,
             anchor_x="center",
