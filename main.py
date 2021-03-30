@@ -74,6 +74,7 @@ class Game(arcade.View):
         self.enemy_bullet_list = None
 
         self.wall_list = None
+        self.donut_list = None
         self.enemy_list = None
 
         self.up_pressed = False
@@ -95,6 +96,7 @@ class Game(arcade.View):
         self.player_list.draw()
         self.bullet_list.draw()
         self.wall_list.draw()
+        self.donut_list.draw()
         self.enemy_list.draw()
         self.enemy_bullet_list.draw()
 
@@ -217,6 +219,7 @@ class Game(arcade.View):
 
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
+        self.donut_list = arcade.SpriteList()
         self.enemy_bullet_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
@@ -226,6 +229,29 @@ class Game(arcade.View):
         self.player_sprite.center_y = 50
         self.player_list.append(self.player_sprite)
 
+        for _ in range((self.level + 1) * 2):
+            donut = arcade.Sprite("assets/donut.png", 1)
+
+
+            donut_placed = False
+
+            while not donut_placed:
+                donut.center_x = random.randrange(SCREEN_WIDTH)
+                donut.center_y = random.randrange(SCREEN_HEIGHT)
+
+                donut_hit_list = arcade.check_for_collision_with_list(
+                    donut, self.donut_list
+                )
+
+                wall_hit_list = arcade.check_for_collision_with_list(
+                    donut, self.wall_list
+                )
+
+                
+                donut_placed = len(donut_hit_list) == 0 and len(wall_hit_list) == 0
+            
+            self.donut_list.append(donut)
+
         for _ in range(25):
             wall = arcade.Sprite("assets/wall.png", 1)
 
@@ -233,7 +259,6 @@ class Game(arcade.View):
 
             # Keep trying until success
             while not wall_placed:
-                # Position the coin
                 wall.center_x = random.randrange(SCREEN_WIDTH)
                 wall.center_y = random.randrange(SCREEN_HEIGHT)
 
@@ -244,7 +269,6 @@ class Game(arcade.View):
                 if len(wall_hit_list) == 0:
                     wall_placed = True
 
-            # Add the coin to the lists
             self.wall_list.append(wall)
 
         self.enemy_engines = []
@@ -255,7 +279,6 @@ class Game(arcade.View):
 
             # Keep trying until success
             while not enemy_placed:
-                # Position the coin
                 enemy.center_x = random.randrange(SCREEN_WIDTH)
                 enemy.center_y = random.randrange(SCREEN_HEIGHT)
 
@@ -269,7 +292,6 @@ class Game(arcade.View):
             engine = arcade.PhysicsEngineSimple(enemy, self.wall_list)
             self.enemy_engines.append(engine)
 
-            # Add the coin to the lists
             self.enemy_list.append(enemy)
 
         self.physics_engine = arcade.PhysicsEngineSimple(
@@ -298,10 +320,6 @@ class Game(arcade.View):
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
-        # If a player releases a key, zero out the speed.
-        # This doesn't work well if multiple keys are pressed.
-        # Use 'better move by keyboard' example if you need to
-        # handle this.
         if key == arcade.key.UP:
             self.up_pressed = False
         elif key == arcade.key.DOWN:
