@@ -4,8 +4,10 @@ from text import draw_text
 
 
 class GameOverView(arcade.View):
-    def __init__(self, window: arcade.Window, game: arcade.View):
-        self.game = game
+    def __init__(
+        self, window: arcade.Window, game: arcade.View, level: int, score: int
+    ):
+        self.game, self.level, self.score = game, level, score
 
         super().__init__(window=window)
 
@@ -22,11 +24,19 @@ class GameOverView(arcade.View):
             anchor_x="center",
         )
         draw_text(
-            "Click to restart",
+            f"You reached wave {self.level} and had a score of {self.score}!",
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT / 2 - 75,
             arcade.color.GRAY,
-            font_size=20,
+            font_size=15,
+            anchor_x="center",
+        )
+        draw_text(
+            "Click to restart",
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 2 - 100,
+            arcade.color.GRAY,
+            font_size=15,
             anchor_x="center",
         )
 

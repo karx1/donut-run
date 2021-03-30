@@ -102,7 +102,7 @@ class Game(arcade.View):
         self.enemy_bullet_list.draw()
 
         # Draw score and level text
-        draw_text(f"Wave: {self.level}", 10, 40, arcade.color.WHITE, 14)
+        draw_text(f"Wave: {self.level + 1}", 10, 40, arcade.color.WHITE, 14)
         draw_text(f"Score: {self.score}", 10, 20, arcade.color.WHITE, 14)
 
     def on_update(self, delta_time: float):
@@ -139,7 +139,6 @@ class Game(arcade.View):
             for donut in donut_hit_list:
                 donut.remove_from_sprite_lists()
                 self.score += 1
-                print(self.score)
 
         for bullet in self.bullet_list:
             wall_hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
@@ -171,7 +170,7 @@ class Game(arcade.View):
 
             if player_hit:
                 self.player_sprite.remove_from_sprite_lists()
-                view = GameOverView(self.window, Game)
+                view = GameOverView(self.window, Game, self.level + 1, self.score)
                 self.window.show_view(view)
 
             if len(wall_hit_list) > 0:
