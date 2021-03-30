@@ -128,6 +128,14 @@ class Game(arcade.View):
 
             self.player_sprite.angle = math.degrees(angle)
 
+        donut_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.donut_list)
+
+        if len(donut_hit_list) > 0:
+            for donut in donut_hit_list:
+                donut.remove_from_sprite_lists()
+                self.score += 1
+                print(self.score)
+
         for bullet in self.bullet_list:
             wall_hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
             enemy_hit_list = arcade.check_for_collision_with_list(
@@ -153,6 +161,7 @@ class Game(arcade.View):
 
         for bullet in self.enemy_bullet_list:
             wall_hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
+            donut_hit_list = arcade.check_for_collision_with_list(bullet, self.donut_list)
             player_hit = arcade.check_for_collision(bullet, self.player_sprite)
 
             if player_hit:
@@ -162,6 +171,11 @@ class Game(arcade.View):
 
             if len(wall_hit_list) > 0:
                 bullet.remove_from_sprite_lists()
+            
+            if len(donut_hit_list) > 0:
+                bullet.remove_from_sprite_lists()
+                for donut in donut_hit_list:
+                    donut.remove_from_sprite_lists()
 
             if (
                 bullet.bottom > SCREEN_WIDTH
