@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import arcade
 import math
 import random
