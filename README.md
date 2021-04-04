@@ -1,7 +1,6 @@
 # Donut Run
 
-karx's entry for PyWeek 31. Tested on Python 3.8.1 in a normal python
-virtual environment on Arch Linux.
+karx's entry for PyWeek 31. Requires at least Python version 3.6 on any operating system.
 
 ## Running
 
@@ -12,10 +11,12 @@ You can do this by running:
 pip install -r requirements.txt
 ```
 
-Then, simply run the `main.py` file.
+Then, simply run the `run_game.py` file.
 
 ```bash
-python main.py
+python run_game.py
+# or
+./run_game.py
 ```
 
 ## Controls
